@@ -25,8 +25,8 @@ stages:
         testResultsFiles: '**/surefire-reports/TEST-*.xml'
         goals: 'package'
 
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '/home/vsts/work/1/s/verademo.war'
-        ArtifactName: 'drop'
-        publishLocation: 'Container'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(System.DefaultWorkingDirectory)/target/verademo.war'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
