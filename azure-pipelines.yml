@@ -28,7 +28,7 @@ steps:
     script: |
       curl -sSO https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip
       unzip -o pipeline-scan-LATEST.zip
-      chmod -R 777 .
+      chmod -R 777 "my-app-1.0-SNAPSHOT.jar"
       # war_file=$(find . -name '*.war' -print -quit)
       java -jar pipeline-scan.jar -vid $(VERACODE_API_ID) -vkey $(VERACODE_API_KEY) -f "my-app-1.0-SNAPSHOT.jar" || true
 - publish: $(System.DefaultWorkingDirectory)/results.json
