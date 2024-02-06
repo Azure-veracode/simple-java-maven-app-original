@@ -12,7 +12,7 @@ pool:
 steps:
 - task: Maven@3
   inputs:
-    mavenPomFile: 'pom.xml'
+    mavenPomFile: 'app/pom.xml'
     mavenOptions: '-Xmx3072m'
     javaHomeOption: 'JDKVersion'
     jdkVersionOption: '1.8'
@@ -21,18 +21,13 @@ steps:
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     goals: 'package'
     
-- task: Veracode Flaw Importer@3
+- task: Bash@3
+  displayName: Veracode Pipeline
   inputs:
-    ConnectionDetailsSelection: 'Credentials'
-    apiId: '$(VERACODE_API_ID)'
-    apiKey: '$(VERACODE_API_KEY)'
-    veracodeAppProfile: '$(system.teamProject)'
-    sandboxName: 
-    scanType: 'Static, SCA'
-    importType: 'All Unmitigated Flaws Violating Policy'
-    workItemType: 'Bug'
-    area: '$(system.teamProject)'
-    overwriteAreaPathInWorkItemsOnImport: true
-    iterationPath: '$(system.teamProject)'
-    overwriteIterationPath: true
-    flawImportLimit: '1000'
+    targetType: 'inline'
+    script: |
+      curl -sSO https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip
+      unzip -o pipeline-scan-LATEST.zip
+      java -jar pipeline-scan.jar -vid $(VERACODE_API_ID) -vkey $(VERACODE_API_KEY) -f /home/vsts/work/1/s/app/target/verademo.war || true
+- publish: $(System.DefaultWorkingDirectory)/results.json
+  artifact: VeracodeBaseline
